@@ -34,6 +34,14 @@
           >
             A password is required.
           </small>
+          <small
+            *ngIf="password.invalid && password.errors && password.errors?.['pattern']"
+            class="text-danger"
+          >
+            The password must be between 9 and 22 characters long, containing an
+            uppercase and lowercase letter and a special character: &#64;
+            $!%*?&(){{ "{" }}{{ "}" }}_.
+          </small>
         </div>
         <small *ngIf="loginError" class="text-danger">
           {{ loginError }}
