@@ -1,0 +1,56 @@
+<main class="container-fluid container-md">
+  <div class="row d-flex justify-content-center">
+    <div class="col-6 rounded mt-5 py-5 form-div d-flex justify-content-center">
+      <form [formGroup]="loginForm">
+        <div *ngIf="username" class="form-floating">
+          <input
+            formControlName="username"
+            class="form-control"
+            id="username"
+            type="text"
+            placeholder="Enter your User Name..."
+          />
+          <label for="username">Username</label>
+          <small
+            *ngIf="username.invalid && username.touched"
+            class="small text-danger"
+          >
+            <span *ngIf="username.touched">An user name is required.</span>
+          </small>
+        </div>
+
+        <div *ngIf="password" class="form-floating mt-4">
+          <input
+            formControlName="password"
+            class="form-control"
+            type="password"
+            id="password"
+            placeholder="Enter your password..."
+          />
+          <label for="password">Password</label>
+          <small
+            *ngIf="password.invalid && password.touched"
+            class="text-danger"
+          >
+            A password is required.
+          </small>
+        </div>
+        <small *ngIf="loginError" class="text-danger">
+          {{ loginError }}
+        </small>
+        <!-- Submit Button-->
+        <div class="mt-3">
+          <button
+            [disabled]="loginForm.invalid"
+            (click)="login()"
+            class="me-3 me-md-0 px-2 py-1"
+            id="loginButton"
+            type="submit"
+          >
+            Log in
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
