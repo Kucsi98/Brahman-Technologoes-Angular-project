@@ -1,0 +1,8 @@
+@import "../../../styles.scss";
+
+footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  background-color: $secondary-color;
+}
