@@ -9,6 +9,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ProfileComponent } from './components/profile/profile.component';
 
 const routes: Routes = [];
 
@@ -18,6 +19,7 @@ const routes: Routes = [];
     HeaderComponent,
     FooterComponent,
     LoginComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

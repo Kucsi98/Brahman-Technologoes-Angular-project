@@ -1,0 +1,224 @@
+<!--Kripto hozzáadásához szükséges modal ablak-->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Add a new cryptocurrency
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body m-auto">
+        <select name="" id="">
+          <option selected disabled>Choose</option>
+          <option
+            value="{{ crypto }}"
+            *ngFor="let crypto of newCryptos"
+            (click)="toSelectCrypto(crypto)"
+          >
+            {{ crypto }}
+          </option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-primary m-auto"
+          data-bs-dismiss="modal"
+          (click)="addCrypto(currentUser$!, selectedCrypto)"
+        >
+          Add
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Modal vége-->
+
+<div class="container">
+  <div class="row d-flex justify-content-evenly">
+    <!--Oldalsó sáv ami listázza az elmentett kriptókat-->
+    <div class="col-2 col-md-4">
+      <img
+        [src]="isOpen ? 'assets/img/left.png' : 'assets/img/right.png'"
+        alt="right arrow"
+        (click)="toggleList()"
+        class="list-btn d-md-none"
+      />
+      <div class="list py-1" [class.listClass]="listVariable">
+        <div>
+          <ul class="col-6 m-auto p-0">
+            <li class="mb-2" *ngFor="let crypto of listedCryptos">
+              <span class="crypto-name">{{ crypto.name }}</span>
+              <div class="currentPrice">
+                <span class="crypto-status text-success"
+                  >↑ {{ crypto.high }}</span
+                >
+                <span class="crypto-status text-danger"
+                  >↓ {{ crypto.low }}
+                </span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!--Lista sáv vége, Arra gondoltam ezt kiszervezném egy külön componens-be-->
+    <!--Kriptovalutákat megjelenítő tábla-->
+    <div
+      class="container-crypto-tab col-10 col-md-6 position-relative"
+      [class.cryptoClass]="listVariable"
+    >
+      <img
+        src="assets/img/log-out.png"
+        alt="log out"
+        class="position-absolute end-0 m-2"
+        (click)="logout()"
+      />
+
+      <ul class="nav nav-tabs my-2" [ngClass]="{ 'border-0': !currentCrypto }">
+        <li class="nav-item">
+          <a class="nav-link active" *ngIf="currentCrypto">{{
+            currentCryptoName
+          }}</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            data-bs-toggle="dropdown"
+            role="button"
+            aria-expanded="false"
+            >Cryptos</a
+          >
+          <ul class="dropdown-menu">
+            <li *ngFor="let crypto of currentUser$?.cryptocurrencis">
+              <a class="dropdown-item" (click)="chooseCrypto(crypto)">{{
+                crypto
+              }}</a>
+            </li>
+          </ul>
+        </li>
+        <!--Ez az elem nyitja meg a modal ablakot-->
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+            (click)="getNewCryptos(savedCrypto)"
+            >+</a
+          >
+        </li>
+        <!--elem vége-->
+      </ul>
+
+      <div class="row" *ngIf="currentCrypto">
+        <div class="col-12">
+          <div class="my-3 d-flex justify-content-center">
+            <div class="mt-3 text-center">
+              <div>
+                <!--Kriptovaluta - dollár váltó modul-->
+                <div class="d-felx justify-content-center position-relative">
+                  <!--Kripto - dollár váltás-->
+                  <div
+                    *ngIf="!isDollar"
+                    class="input-group input-group-sm mb-3 m-auto"
+                    style="width: 30%"
+                  >
+                    <span
+                      class="input-group-text p-1"
+                      id="inputGroup-sizing-sm"
+                    >
+                      <img
+                        src="assets/img/bitcoin.png"
+                        alt=""
+                        width="20px"
+                        height="20px"
+                      />
+                    </span>
+                    <input
+                      type="number"
+                      [(ngModel)]="amount"
+                      placeholder="Add crypto"
+                      class="form-control"
+                      aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm"
+                    />
+                  </div>
+                  <p *ngIf="result && !isDollar" class="m-0 mt-2 text-light">
+                    {{ amount }} {{ currentCryptoName }} to {{ result }} $
+                  </p>
+                  <!--Kripto - dollár vége-->
+
+                  <!--Dollár - kripto váltás-->
+                  <div
+                    *ngIf="isDollar"
+                    class="input-group input-group-sm mb-3 m-auto"
+                    style="width: 30%"
+                  >
+                    <span class="input-group-text p-1" id="inputGroup-sizing-sm"
+                      ><img
+                        src="assets/img/dollar.png"
+                        alt=""
+                        width="20px"
+                        height="20px"
+                    /></span>
+                    <input
+                      type="number"
+                      [(ngModel)]="amount"
+                      placeholder="Add crypto"
+                      class="form-control"
+                      aria-label="Sizing example input"
+                      aria-describedby="inputGroup-sizing-sm"
+                    />
+                  </div>
+                  <p *ngIf="result && isDollar" class="m-0 mt-2 text-light">
+                    {{ amount }} $ to {{ result }} {{ currentCryptoName }}
+                  </p>
+                  <!--Dollár - kripto vége-->
+                  <button class="convert-btn mt-2" (click)="convert()">
+                    Convert
+                  </button>
+                  <!--Valuta fordító gomb-->
+                  <div div class="mx-2 d-block position-absolute top-0 end-0">
+                    <img
+                      [ngClass]="{ 'swap-icon': swap }"
+                      (click)="toggleIsDollar()"
+                      src="assets/img/circle.png"
+                      alt="swap"
+                    />
+                  </div>
+                  <!--Gomb vége-->
+                </div>
+                <!--Váltó modul vége, ezt is kiszervezném-->
+              </div>
+
+              <div class="chart my-3 d-flex justify-content-center">
+                <img src="assets/img/graph.jpg" alt="chart" width="90%" />
+              </div>
+              <div class="d-flex justify-content-end">
+                <button
+                  class="btn btn-danger"
+                  (click)="deleteCrypto(currentUser$!, currentCryptoName!)"
+                >
+                  delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Kriptovaluta tábla vége, ez is mehetne külön komponensbe-->
+  </div>
+</div>

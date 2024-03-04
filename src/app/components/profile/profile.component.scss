@@ -1,0 +1,96 @@
+@import "../../../styles.scss";
+//kicsit zavaros itt még nem raktam rendet :D
+
+a:hover {
+  cursor: pointer;
+}
+
+label {
+  color: $primary-text-color;
+}
+
+.container {
+  margin-top: 4em;
+  margin-bottom: 4em;
+}
+
+.container-crypto-tab {
+  border-radius: 5px;
+  background-color: $primary-color;
+}
+
+.convert-btn {
+  background-color: $secondary-color;
+  color: $primary-text-color;
+  border-radius: 5px;
+  border: none;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.swap-icon {
+  animation: mymove 1s;
+}
+
+@keyframes mymove {
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+li {
+  list-style: none;
+}
+
+.list {
+  background-color: $primary-color;
+  border-radius: 5px;
+  li {
+    border-bottom: 1px solid $secondary-color;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.list-btn {
+  cursor: pointer;
+  background-color: $primary-color;
+  border-radius: 50%;
+  position: absolute;
+  top: 4em;
+  left: 1em;
+}
+
+@media only screen and (max-width: 767px) {
+  .list {
+    position: fixed;
+
+    top: 9em;
+    width: 50%;
+    left: -100%;
+    transition: 0.4s ease-in-out;
+  }
+
+  .listClass {
+    left: 0;
+  }
+
+  .container-crypto-tab {
+    position: fixed;
+    top: 5em;
+    left: 10%;
+    transition: 0.4s ease-in-out;
+  }
+
+  .cryptoClass {
+    left: 55%;
+  }
+
+  .log-out-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+}
