@@ -56,7 +56,11 @@
         (click)="toggleList()"
         class="list-btn d-md-none"
       />
-      <div class="list py-1" [class.listClass]="listVariable">
+      <div
+        class="list py-1"
+        [class.listClass]="listVariable"
+        *ngIf="listedCryptos.length > 0"
+      >
         <div>
           <ul class="col-6 m-auto p-0">
             <li class="mb-2" *ngFor="let crypto of listedCryptos">

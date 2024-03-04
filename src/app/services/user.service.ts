@@ -68,6 +68,7 @@ export class UserService {
   addCrypto(user: UserModel, newCrypto: string) {
     user.cryptocurrencis.push(newCrypto);
     this._logedInUser.next(user);
+    localStorage.setItem('currentUser', JSON.stringify(user));
   }
 
   deleteCrypto(user: UserModel, crypto: string) {
@@ -75,6 +76,5 @@ export class UserService {
     user.cryptocurrencis?.splice(this.cryptoID as number, 1);
     this._logedInUser.next(user);
     localStorage.setItem('currentUser', JSON.stringify(user));
-    console.log('user service delete Crypto: ', this.logedInUser);
   }
 }

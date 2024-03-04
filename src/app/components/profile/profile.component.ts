@@ -6,6 +6,8 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { HistoricalCrypto } from 'src/app/models/historicalCrypto.model';
 import { UserModel } from 'src/app/models/user.model';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { UserService } from 'src/app/services/user.service';
@@ -44,6 +46,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   cryptoList: string[] | undefined = undefined;
   listedCryptos: { name: string; high?: number; low?: number }[] = [];
 
+  chartData!: HistoricalCrypto[];
   ngOnInit(): void {
     this.userService.checkUser();
     this.userService.logedInUser.subscribe((newvalue) => {
@@ -125,6 +128,43 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
         this.currentCryptoRate = this.currentCrypto.rate;
         this.amount = 0;
         this.result = 0;
+      },
+      complete: () => {
+        this.chartData = [
+          {
+            price_close: 66534,
+            time_close: '2024-03-04T19:10:13.0710000Z',
+          },
+          {
+            price_close: 63142,
+            time_close: '2024-03-03T23:59:58.6890000Z',
+          },
+          {
+            price_close: 62042,
+            time_close: '2024-03-02T23:59:58.5960000Z',
+          },
+          {
+            price_close: 62444,
+            time_close: '2024-03-01T23:59:48.0610000Z',
+          },
+          {
+            price_close: 61161,
+            time_close: '2024-02-29T23:59:59.0920000Z',
+          },
+          {
+            price_close: 62512,
+            time_close: '2024-02-28T23:59:55.7310000Z',
+          },
+          {
+            price_close: 57068,
+            time_close: '2024-02-27T23:59:59.2940000Z',
+          },
+        ];
+        //   this.cryptoService.gettingHistoricalData(crypto).subscribe({
+        //     next: (cryptoData) => {
+        //       console.log('historycal data in choose crypto: ', cryptoData);
+        //     },
+        //   });
       },
     });
   }
