@@ -21,25 +21,20 @@ import { WebsocketService } from 'src/app/services/websocket.service';
 })
 export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   currentCrypto?: any;
-  //= {
-  //   asset_id_base: 'USD',
-  //   rates: ['', 'BTC', 0.00001535368407289838],
-  // }
-  //aktiális kriptovaluta
 
   currentCryptoName?: string | null;
   currentCryptoRate?: number | null;
 
-  isDollar: boolean = false; //a valutaváltó ettől a változótól függ
-  swap: boolean = false; //valuta cserélő gomb animációja ehhez köthető
-  amount!: number; //input mezőbe beírt érték
-  resultConverter!: number; //eredménye a váltásnak
+  isDollar: boolean = false;
+  swap: boolean = false;
+  amount!: number;
+  resultConverter!: number;
 
-  selectedCrypto!: string; //kriptovaluta hozzáadásakor a kiválasztott kripto
-  newCryptos: string[] = []; //azok a kriptok amiket még nem mentett el a user
+  selectedCrypto!: string;
+  newCryptos: string[] = [];
 
-  isOpen: boolean = false; //mobil nézetben a valuta listázó modul megjelenítése
-  listVariable: boolean = false; // u.a css class-t ad hozzá
+  isOpen: boolean = false;
+  listVariable: boolean = false;
 
   currentUser$!: UserModel | null;
   savedCrypto: string[] = [];
@@ -51,7 +46,6 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
 
   //chart
   view: any = [];
-  // CHART OPTIONS
   showLabels: boolean = true;
   animations: boolean = false;
   xAxis: boolean = true;
@@ -68,9 +62,13 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   };
 
   ngOnInit(): void {
+    // Check if a user is already logged in
     this.userService.checkUser();
+
+    // Subscribe to the logged-in user changes
     this.userService.logedInUser.subscribe((newvalue) => {
       this.currentUser$ = newvalue!;
+      // Populate the savedCrypto array with the user's cryptocurrencies
       if (this.currentUser$.cryptocurrencis) {
         this.currentUser$.cryptocurrencis.forEach((crypto) =>
           this.savedCrypto.push(crypto)
@@ -78,7 +76,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
       } else this.currentUser$.cryptocurrencis = [];
     });
 
-    //crypto listázása
+    //WEBSOCKET
     // this.userService.logedInUser.subscribe((user) => {
     //   this.cryptoList = user?.cryptocurrencis;
 
@@ -114,6 +112,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
     private webSocketService: WebsocketService
   ) {}
 
+  // Function to get new cryptocurrencies
   getNewCryptos(cryptonames: string[]) {
     this.newCryptos = [];
     return this.cryptoService.getAllCrypto().subscribe({
@@ -127,22 +126,26 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  // Function to add a cryptocurrency to the user's portfolio
   addCrypto(user: UserModel, crypto: string) {
     this.userService.addCrypto(user, crypto);
   }
 
+  // Function to delete a cryptocurrency from the user's portfolio
   deleteCrypto(user: UserModel, crypto: string) {
+    // Reset currentCrypto details when a cryptocurrency is deleted
     this.userService.deleteCrypto(user, crypto);
     this.currentCrypto = null;
     this.currentCryptoName = null;
     this.currentCryptoRate = null;
+    this.chartData = [];
   }
 
-  //megkapja a kiválasztott kriptovalutát
-  //elmenti a currentCrypto változóba és 0-ra állítja az amount és result értékeit
+  // Function to choose a cryptocurrency and fetch its details
   chooseCrypto(crypto: string) {
     this.cryptoService.exchange(crypto).subscribe({
       next: (crypto) => {
+        // Store current cryptocurrency details
         this.currentCrypto = crypto.rates[0];
         this.currentCryptoName = this.currentCrypto.asset_id_quote;
         this.currentCryptoRate = this.currentCrypto.rate;
@@ -150,6 +153,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
         this.resultConverter = 0;
       },
       complete: () => {
+        // Fetch historical data for the chosen cryptocurrency
         this.cryptoService
           .getHistoricalData(this.currentCryptoName!)
           .subscribe({
@@ -170,6 +174,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
 
                 currentData.push(historyData);
               });
+              // Update chartData with historical data
               this.chartData = currentData;
             },
           });
@@ -177,11 +182,9 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  //Crypto converter
-  //isDollar változótól függően hajtja végre a váltást
+  // Function to convert currency based on user input
   convert() {
     if (!this.isDollar && this.currentCrypto) {
-      //console.log('conert crypto to dollar: ', this.currentCrypto?.rates[2]);
       this.resultConverter = this.amount / this.currentCryptoRate!;
     }
     if (this.isDollar && this.currentCrypto) {
@@ -189,7 +192,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  //fordít az isDollar értékén
+  // Function to toggle between Dollar and Cryptocurrency
   toggleIsDollar() {
     this.isDollar = !this.isDollar;
     this.swap = !this.swap;
@@ -199,28 +202,23 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
     this.convert();
   }
 
-  //Elmenti a kattintott kripto nevét
+  // Function to handle the selected cryptocurrency in the list
   toSelectCrypto(crypto: string) {
     this.selectedCrypto = crypto;
   }
 
-  //mobilnézetben a valuta listázó modul megnyitása és zárása
+  // Function to toggle the display of the cryptocurrency list
   toggleList() {
     this.isOpen = !this.isOpen;
     this.listVariable = !this.listVariable;
   }
 
-  //meghívom a userService-ből a logOut() függvényt és a kezdőlapra navigálok
+  // Function to log out the user
   logout() {
     this.userService.logOut();
     this.router.navigate(['']);
   }
 
-  //chart
-
-  // //crypto list
-
-  // // Getting HIGH and LOW values from WebSocket
   // gettingCryptoData() {
   //   this.webSocketService.socket$
   //     .pipe(
@@ -231,8 +229,6 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   //           .replace('_USD', '');
   //         let high = message.price_high;
   //         let low = message.price_low;
-
-  //         // Getting latest data to show at first time
   //         this.cryptoService.gettingCurrentData(name).subscribe({
   //           next: (data: any) => {
   //             high = data.price_high;
@@ -243,7 +239,6 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   //         return { name: name, high: high, low: low };
   //       })
   //     )
-  //     // Subscribe to WebSocket
   //     .subscribe({
   //       next: (message) => {
   //         const changeData = this.listedCryptos.find(
@@ -268,8 +263,6 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   //       },
   //     });
   // }
-
-  // // Close WebSocket
   // close() {
   //   this.webSocketService.closeSocket();
   // }

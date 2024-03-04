@@ -10,13 +10,11 @@ export class CryptoService {
   private readonly CRYPTO_URL = 'https://rest.coinapi.io/v1/';
   private readonly headers = {
     'X-CoinAPI-Key': 'DCA48354-D7E0-4986-8466-D5D959A73AEF',
-    //Accept: 'application/json',
   };
 
-  //DCA48354-D7E0-4986-8466-D5D959A73AEF
-  //17F5EBEA-04BD-4BB0-B9E0-037E65E07486
   constructor(private http: HttpClient) {}
 
+  // Function to get all available cryptocurrencies
   getAllCrypto(): Observable<any[]> {
     return this.http
       .get<any>(
@@ -27,11 +25,13 @@ export class CryptoService {
       )
       .pipe(
         map((result) => {
+          // Extract and return the base asset_id from the API response
           return result.map((item: any) => item.asset_id_base);
         })
       );
   }
 
+  // Function to get exchange rate for a specific cryptocurrency
   exchange(currentCrypto: string): Observable<ExchangeCryptoModel> {
     return this.http.get<ExchangeCryptoModel>(
       `${this.CRYPTO_URL}exchangerate/USD?filter_asset_id=${currentCrypto}`,
@@ -41,6 +41,7 @@ export class CryptoService {
     );
   }
 
+  // Function to get the latest data for a specific cryptocurrency
   getCurrentData(cryptoName: string): Observable<[number, string][]> {
     return this.http
       .get<any>(
@@ -59,6 +60,7 @@ export class CryptoService {
       );
   }
 
+  // Function to get historical data for a specific cryptocurrency
   getHistoricalData(cryptoName: string): Observable<[number, string][]> {
     return this.http
       .get<any>(
