@@ -9,7 +9,7 @@ import { ExchangeCryptoModel } from '../models/exchangeCrypto.model';
 export class CryptoService {
   private readonly CRYPTO_URL = 'https://rest.coinapi.io/v1/';
   private readonly headers = {
-    'X-CoinAPI-Key': '17F5EBEA-04BD-4BB0-B9E0-037E65E07486',
+    'X-CoinAPI-Key': 'DCA48354-D7E0-4986-8466-D5D959A73AEF',
     //Accept: 'application/json',
   };
 

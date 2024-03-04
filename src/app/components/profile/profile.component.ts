@@ -6,6 +6,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { Color, ScaleType } from '@swimlane/ngx-charts';
 import { Observable } from 'rxjs';
 import { HistoricalCrypto } from 'src/app/models/historicalCrypto.model';
 import { UserModel } from 'src/app/models/user.model';
@@ -32,7 +33,7 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   isDollar: boolean = false; //a valutaváltó ettől a változótól függ
   swap: boolean = false; //valuta cserélő gomb animációja ehhez köthető
   amount!: number; //input mezőbe beírt érték
-  result!: number; //eredménye a váltásnak
+  resultConverter!: number; //eredménye a váltásnak
 
   selectedCrypto!: string; //kriptovaluta hozzáadásakor a kiválasztott kripto
   newCryptos: string[] = []; //azok a kriptok amiket még nem mentett el a user
@@ -47,6 +48,25 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   listedCryptos: { name: string; high?: number; low?: number }[] = [];
 
   chartData!: HistoricalCrypto[];
+
+  //chart
+  view: any = [];
+  // CHART OPTIONS
+  showLabels: boolean = true;
+  animations: boolean = false;
+  xAxis: boolean = true;
+  yAxis: boolean = true;
+  showYAxisLabel: boolean = true;
+  showXAxisLabel: boolean = false;
+  xAxisLabel: string = 'Days';
+  yAxisLabel: string = 'Cost in USD';
+  timeline: boolean = true;
+  autoScale: boolean = true;
+
+  colorScheme: any = {
+    domain: ['#f5cac3'],
+  };
+
   ngOnInit(): void {
     this.userService.checkUser();
     this.userService.logedInUser.subscribe((newvalue) => {
@@ -127,44 +147,32 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
         this.currentCryptoName = this.currentCrypto.asset_id_quote;
         this.currentCryptoRate = this.currentCrypto.rate;
         this.amount = 0;
-        this.result = 0;
+        this.resultConverter = 0;
       },
       complete: () => {
-        this.chartData = [
-          {
-            price_close: 66534,
-            time_close: '2024-03-04T19:10:13.0710000Z',
-          },
-          {
-            price_close: 63142,
-            time_close: '2024-03-03T23:59:58.6890000Z',
-          },
-          {
-            price_close: 62042,
-            time_close: '2024-03-02T23:59:58.5960000Z',
-          },
-          {
-            price_close: 62444,
-            time_close: '2024-03-01T23:59:48.0610000Z',
-          },
-          {
-            price_close: 61161,
-            time_close: '2024-02-29T23:59:59.0920000Z',
-          },
-          {
-            price_close: 62512,
-            time_close: '2024-02-28T23:59:55.7310000Z',
-          },
-          {
-            price_close: 57068,
-            time_close: '2024-02-27T23:59:59.2940000Z',
-          },
-        ];
-        //   this.cryptoService.gettingHistoricalData(crypto).subscribe({
-        //     next: (cryptoData) => {
-        //       console.log('historycal data in choose crypto: ', cryptoData);
-        //     },
-        //   });
+        this.cryptoService
+          .getHistoricalData(this.currentCryptoName!)
+          .subscribe({
+            next: (cryptoDatas) => {
+              const currentData: HistoricalCrypto[] = [];
+              cryptoDatas.reverse().forEach((cryptoData: any) => {
+                const currentDate = new Date(cryptoData.time_close);
+
+                const currentDayOfMonth = currentDate.getDate();
+                const currentMonth = currentDate.getMonth();
+                const currentYear = currentDate.getFullYear();
+                const historyData = {
+                  name: `${currentYear}. ${
+                    currentMonth + 1
+                  }. ${currentDayOfMonth}.`,
+                  value: cryptoData.price_close,
+                };
+
+                currentData.push(historyData);
+              });
+              this.chartData = currentData;
+            },
+          });
       },
     });
   }
@@ -174,10 +182,10 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
   convert() {
     if (!this.isDollar && this.currentCrypto) {
       //console.log('conert crypto to dollar: ', this.currentCrypto?.rates[2]);
-      this.result = this.amount / this.currentCryptoRate!;
+      this.resultConverter = this.amount / this.currentCryptoRate!;
     }
     if (this.isDollar && this.currentCrypto) {
-      this.result = this.amount * this.currentCryptoRate!;
+      this.resultConverter = this.amount * this.currentCryptoRate!;
     }
   }
 
@@ -207,6 +215,8 @@ export class ProfileComponent implements OnInit, OnChanges, OnDestroy {
     this.userService.logOut();
     this.router.navigate(['']);
   }
+
+  //chart
 
   // //crypto list
 

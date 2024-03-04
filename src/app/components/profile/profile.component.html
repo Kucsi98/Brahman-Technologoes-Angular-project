@@ -59,12 +59,13 @@
       <div
         class="list py-1"
         [class.listClass]="listVariable"
-        *ngIf="listedCryptos.length > 0"
+        *ngIf="savedCrypto.length > 0"
       >
         <div>
           <ul class="col-6 m-auto p-0">
-            <li class="mb-2" *ngFor="let crypto of listedCryptos">
-              <span class="crypto-name">{{ crypto.name }}</span>
+            <li class="mb-2" *ngFor="let crypto of savedCrypto">
+              {{ crypto }}
+              <!-- <span class="crypto-name">{{ crypto }}</span>
               <div class="currentPrice">
                 <span class="crypto-status text-success"
                   >↑ {{ crypto.high }}</span
@@ -72,7 +73,7 @@
                 <span class="crypto-status text-danger"
                   >↓ {{ crypto.low }}
                 </span>
-              </div>
+              </div> -->
             </li>
           </ul>
         </div>
@@ -159,8 +160,12 @@
                       aria-describedby="inputGroup-sizing-sm"
                     />
                   </div>
-                  <p *ngIf="result && !isDollar" class="m-0 mt-2 text-light">
-                    {{ amount }} {{ currentCryptoName }} to {{ result }} $
+                  <p
+                    *ngIf="resultConverter && !isDollar"
+                    class="m-0 mt-2 text-light"
+                  >
+                    {{ amount }} {{ currentCryptoName }} to
+                    {{ resultConverter }} $
                   </p>
                   <!--Kripto - dollár vége-->
 
@@ -186,8 +191,12 @@
                       aria-describedby="inputGroup-sizing-sm"
                     />
                   </div>
-                  <p *ngIf="result && isDollar" class="m-0 mt-2 text-light">
-                    {{ amount }} $ to {{ result }} {{ currentCryptoName }}
+                  <p
+                    *ngIf="resultConverter && isDollar"
+                    class="m-0 mt-2 text-light"
+                  >
+                    {{ amount }} $ to {{ resultConverter }}
+                    {{ currentCryptoName }}
                   </p>
                   <!--Dollár - kripto vége-->
                   <button class="convert-btn mt-2" (click)="convert()">
@@ -208,7 +217,22 @@
               </div>
 
               <div class="chart my-3 d-flex justify-content-center">
-                <img src="assets/img/graph.jpg" alt="chart" width="90%" />
+                <ngx-charts-bar-vertical
+                  [results]="chartData"
+                  *ngIf="chartData"
+                  [scheme]="colorScheme"
+                  [showXAxisLabel]="showXAxisLabel"
+                  [showYAxisLabel]="showYAxisLabel"
+                  [xAxis]="xAxis"
+                  [yAxis]="yAxis"
+                  [xAxisLabel]="xAxisLabel"
+                  [yAxisLabel]="yAxisLabel"
+                  [timeline]="timeline"
+                  [autoScale]="autoScale"
+                  [animations]="animations"
+                  style="fill: #fefae0"
+                >
+                </ngx-charts-bar-vertical>
               </div>
               <div class="d-flex justify-content-end">
                 <button
