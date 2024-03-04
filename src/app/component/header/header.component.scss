@@ -1,0 +1,8 @@
+@import "../../../styles.scss";
+
+header {
+  background-color: $secondary-color;
+  a {
+    color: $primary-text-color;
+  }
+}
